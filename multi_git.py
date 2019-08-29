@@ -40,75 +40,46 @@ import sys
 import subprocess, shlex
 import re
 
+base_url='https://github.com/strumet/strumet.github.io/tree/master/'
+
 ## Formal rules
 act_dict = {
         'activities/0/': {
             'regex': re.compile('^\d{6}\.(jpg|png|jpeg)$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'activities/0#activity-0'},
+            'url': base_url + 'activities/0#activity-0'},
         'activities/1/': {
-            'regex': re.compile('^\d{6}[-_]0[1-3][ABC]\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'activities/1#activity-1'},
+            'regex': re.compile('^\d{6}\/', re.IGNORECASE),
+            'url': base_url + 'activities/1#activity-1'},
         'activities/2/': {
-            'regex': re.compile('^\d{6}[-_]\d\d(-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'activities/2#activity-2'},
+            'regex': re.compile('^\d{6}\.pdf$', re.IGNORECASE),
+            'url': base_url + 'activities/2#activity-2'},
         'activities/3/': {
-            'regex': re.compile('^\d{6}[-_][ABCF](-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'activities/3#activity-3'},
+            'regex': re.compile('^\d{6}\.(ifc|pdf)$', re.IGNORECASE),
+            'url': base_url + 'activities/3#activity-3'},
         'activities/4/': {
-            'regex': re.compile('^\d{6}[-_][RP](-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'activities/4#activity-4'},
+            'regex': re.compile('^\d{6}\.(ifc|pdf)$', re.IGNORECASE),
+            'url': base_url + 'activities/4#activity-4'},
         'activities/5/': {
-            'regex': re.compile('^\d{6}(-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'activities/5#activity-5'},
+            'regex': re.compile('^\d{6}\.(ifc|pdf)$', re.IGNORECASE),
+            'url': base_url + 'activities/5#activity-5'},
         'activities/6/': {
-            'regex': re.compile('^\d{6}[-_]\d\d(-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'activities/6#activity-6'},
+            'regex': re.compile('^\d{6}\.pdf$', re.IGNORECASE),
+            'url': base_url + 'activities/6#activity-6'},
         'activities/7/': {
-            'regex': re.compile('^\d{6}[-_][ABC](-LP)?\.png$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'activities/7#activity-7'},
-        'activities/9/': {
-            'regex': re.compile('^\d{6}[^\s]*\..*$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'activities/9#activity-9'},
-        'exercises/': {
-            'regex': re.compile('^\d{6}[-_]\d\d(-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'exercises#exercises'},
-        'midterm_1/': {
-            'regex': re.compile('^\d{6}[-_]\d\d(-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'midterm_1#first-midterm'},
-        'midterm_2/': {
-            'regex': re.compile('^\d{6}[-_]\d\d(-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'midterm_2#second-midterm'},
-        'midterm_1/update/': {
-            'regex': re.compile('^\d{6}[-_]\d\d(-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'midterm_1_update#first-midterm-update'},
-        'midterm_2/update/': {
-            'regex': re.compile('^\d{6}[-_]\d\d(-LP)?\.obj$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'midterm_2_update#second-midterm-udpate'},
+            'regex': re.compile('^.*$', re.IGNORECASE),
+            'url': base_url + 'activities/7#activity-7'},
+        'projects/': {
+            'regex': re.compile('^\d{6}\/', re.IGNORECASE),
+            'url': base_url + 'projects#projects'},
         'exams/': {
-            'regex': re.compile('^\d{6}[-_][12]([_-]LP)?\.png$', re.IGNORECASE),
-            'url': 'https://github.com/strumet/modeling/tree/master/' + \
-                    'exams#final-exam'},
+            'regex': re.compile('^\d{6}\.pdf$', re.IGNORECASE),
+            'url': base_url + 'exams#esame-finale'},
         }
 
 ## Functions
 get_range = lambda li: [val for val in range(li[0], li[1]+1)]
 get_format = lambda x: get_range(list(map(int, x.split('-')))) if '-' in x \
         else map(int, x.split(',')) 
-get_path_index = lambda x: x.rindex('/') + 1 if '/' in x else 1
 get_path_url = lambda p: " pubblicata all'indirizzo " + act_dict[p]['url'] \
         if p in act_dict else '.'
 ## Create mail to send in case of errors
@@ -128,7 +99,7 @@ RAW_PR = sys.argv[2:]
 NESTED_PR = [get_format(i) for i in RAW_PR]
 PR = [item for sublist in NESTED_PR for item in sublist]
 ## Get students data to prepare mail
-STUDENTS_FILE = '/home/mf/Documents/uni/strumod/documents/status.csv'
+STUDENTS_FILE = '/home/mf/Documents/uni/strumet/documents/status.csv'
 STUD_LIST = [l.split(';') for l in 
         open(STUDENTS_FILE, encoding="ISO-8859-1").read().split('\n')]
 STUD_DICT = {l[0]: l[1:4] for l in 
@@ -157,6 +128,7 @@ def main():
         ## Check formal correctness
         if CMD == 'diff':
             reports[str(i)] = []
+            directories = [f for f in act_dict]
             ## Get filenames from diff output
             files = list(map(lambda x: x[:x.index('|')].strip(),
                 cmd.stdout.strip().strip().split('\n')[:-1]))
@@ -164,8 +136,13 @@ def main():
                 if f.startswith('exams'):
                     print(f,)
                     cmd = subprocess.run(commands['show'](i, f), shell=True)
-                path = f[:get_path_index(f)]
-                filename = f[get_path_index(f):].replace('_', '-')
+                for d in directories:
+                    if d in f:
+                        path = d
+                        break
+                    else:
+                        path = ''
+                filename = f[len(path):].replace('_', '-')
                 if len(filename) > 0 and (path not in act_dict or
                         not act_dict[path]['regex'].search(filename)):
                     reports[str(i)].append(f)
